@@ -1,70 +1,24 @@
-// importing file system module and writing to file
-const fs = require('fs');
+const path = require('path');
+const express = require('express')
+const bodyParser = require('body-parser');
 
-fs.writeFileSync('app.txt', 'Hello there, you have created a new text file');
+const app = express();
 
-// data types and funtions
-let name = 'Kaushal';
-let age = '25';
-let hasHobbies = true;
+const adminRoutes = require('./routes/admin');
+const contactRoutes = require('./routes/contact');
+const shopRoutes = require('./routes/shop');
+const successRoutes = require('./routes/success');
 
-function userInfo(userName, userAge, userHasHobby){
-    return ` Name is ${userName}, age is ${userAge} and user has hobbies? ${userHasHobby} `;
-}
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.static(path.join(__dirname, 'public')))
 
-console.log(userInfo(name, age, hasHobbies));
+app.use('/admin', adminRoutes);
+app.use('/admin', contactRoutes);
+app.use(shopRoutes);
+app.use(successRoutes);
 
-// arrow function
-const product = (a , b) => a*b;
-console.log(product(5, 6));
+app.use((req, res, next) => {
+    res.status(404).sendFile(path.join(__dirname, 'views', '404.html')); 
+})
 
-const product = () => 5*5;
-console.log(product());
-
-//object
-const student = {
-    name: 'Kaushal',
-    age: 25,
-    course: 'BackEnd',
-    intro() {
-        console.log('Hii, My name is '+ this.name + ' age is '+ this.age + ' and course is ' + this.course)
-    }
-}
-
-student.intro();
-
-
-
-
-//*****ARRRAY*****
-
-const fruits = ['apple', 'banana', 'grapes', 'mango'];
-
-fruits.push('oranges');
-for(let i of fruits){
-    console.log(i);
-}
-console.log(fruits.map(j => 'fruit is '+ j));
-
-const fruits = ['apple', 'oranges' , '', 'mango', '', 'lemon'];
-console.log(fruits.map(item => {
-    if(item === ''){
-        return 'empty string';
-    }else {
-        return item;
-    }
-}));
-
-//mcq
-const obj1 = {'key1': 1, "key2": 2, "key3": 1000}
-
-let { key1, key3} = obj1
-
-
-
-key1 = 20;
-
-key3 = 123
-
-console.log(key1, key3)
-
+app.listen(3000);
